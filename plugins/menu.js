@@ -56,22 +56,22 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command }) => {
 
   try {
     // DEFAULT MENU
-    let dash = global.dashmenu
-    let m1 = global.dmenut
-    let m2 = global.dmenub
-    let m3 = global.dmenuf
-    let m4 = global.dmenub2
+    let m1 = 'ଓ═┅═━–〈' // topo
+    let m2 = '┊↬' // corpo
+    let m4 = '┊' // corpo para comandos de informação no menu padrão
+    let m3 = '┗––––––––––✦' // rodapé
+    let dash = '┅═┅═❏ *DASHBOARD* ❏═┅═┅'
 
     // COMMAND MENU
-    let cc = global.cmenut
-    let c1 = global.cmenuh
-    let c2 = global.cmenub
-    let c3 = global.cmenuf
-    let c4 = global.cmenua
+    let cc = '❏––––––『' // topo
+    let c1 = '』––––––' // cabeçalho
+    let c2 = '┊✦ ' // corpo
+    let c3 = '┗━═┅═━––––––๑\n' // rodapé
+    let c4 = '\n⌕ ❙❘❙❙❘❙❚❙❘❙❙❚❙❘❙❘❙❚❙❘❙❙❚❙❘❙❙❘❙❚❙❘ ⌕\n     '
 
     // LOGO L P
-    let lprem = global.lopr
-    let llim = global.lolm
+    let lprem = 'Ⓟ' // LOGO PREMIUM NO MENU.JS
+    let llim = 'Ⓛ' // LOGO LIMITE/GRÁTIS NO MENU.JS
     let tag = `@${m.sender.split('@')[0]}`
     let device = await getDevice(m.id)
 
