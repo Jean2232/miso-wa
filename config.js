@@ -7,6 +7,7 @@ global.pairing = '5511963038470' // Número do bot (sem o @s.whatsapp.net)
 global.owner = [['5511915176928', 'Jeann', true]] // Lista de donos: [número, nome, prioridade]
 global.mods = [] // Moderadores
 global.namebot = 'Miso by dark-hosting.com' //Nome do Bot
+global.prefix = '.'
 
 //══════════ ❏ FIGURINHAS E MARCAS ❏ ══════════//
 global.stickpack = `Sticker Criado por ${namebot}\nlinktr.ee/amisobot` // Nome do pacote de figurinhas

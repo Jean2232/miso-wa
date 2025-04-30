@@ -194,19 +194,19 @@ export async function handler(chatUpdate) {
         const isMods = isOwner || global.mods.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const isPrems = isROwner || db.data.users[m.sender].premiumTime > 0
         if (!isOwner && !m.fromMe && opts['self']) return;
+
         if (!m.isGroup && !isOwner && global.db.data.settings[this.user.jid]?.blockPrivate) {
             return
-          }          
-        //if (m.type = 'stickerMessage') return;
+          }
+                   
+        if (!isOwner && global.db.data.settings[this.user.jid]?.ownerOnly) { return }
+          
 
         // Auto Sticker
         if (m.isGroup && global.db.data.chats[m.chat].autoSticker) {
             if (m.fromMe || m.mtype === 'stickerMessage') return
-            
-          
             let q = (m.quoted && /image|video/.test((m.quoted.msg || m.quoted).mimetype || '')) ? m.quoted : m
             let mime = (q.msg || q).mimetype || q.mediaType || ''
-          
             if (/image|video/.test(mime)) {
               try {
                 let img = await q.download?.()
