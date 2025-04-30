@@ -194,7 +194,9 @@ export async function handler(chatUpdate) {
         const isMods = isOwner || global.mods.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const isPrems = isROwner || db.data.users[m.sender].premiumTime > 0
         if (!isOwner && !m.fromMe && opts['self']) return;
-        if (!m.isGroup && !isOwner) return;
+        if (!m.isGroup && !isOwner && global.db.data.settings[this.user.jid]?.blockPrivate) {
+            return
+          }          
         //if (m.type = 'stickerMessage') return;
 
         // Auto Sticker
