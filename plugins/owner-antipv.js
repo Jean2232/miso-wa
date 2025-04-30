@@ -5,10 +5,10 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
   if (!['1', '0'].includes(value)) throw `Use corretamente:\n\n${usedPrefix}${command} 1 — para *ativar* o bloqueio de mensagens no privado\n${usedPrefix}${command} 0 — para *desativar* o bloqueio`
 
   const jid = conn.user.jid
-  global.db.data.settings[jid] ??= {}
+  if (!global.db.data.settings[jid]) global.db.data.settings[jid] = {} // compatível com qualquer versão
   global.db.data.settings[jid].blockPrivate = value === '1'
 
-  await global.db.write() // ✅ Salva a alteração no banco
+  await global.db.write() // Persistir no disco
 
   m.reply(`✅ AntiPV foi ${value === '1' ? '*ativado*' : '*desativado*'} com sucesso.`)
 }

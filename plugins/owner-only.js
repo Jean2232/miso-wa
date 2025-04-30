@@ -4,8 +4,11 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
     let value = args[0]
     if (!['1', '0'].includes(value)) throw `Use corretamente:\n\n${usedPrefix}${command} 1 — para *ativar*\n${usedPrefix}${command} 0 — para *desativar*`
   
-    let settings = global.db.data.settings[conn.user.jid]
-    settings.ownerOnly = value === '1'
+    const jid = conn.user.jid
+    if (!global.db.data.settings[jid]) global.db.data.settings[jid] = {}
+    global.db.data.settings[jid].ownerOnly = value === '1'
+  
+    await global.db.write()
   
     m.reply(`✅ Owner-only foi ${value === '1' ? '*ativado*' : '*desativado*'} com sucesso.`)
   }
