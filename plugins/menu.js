@@ -1,7 +1,3 @@
-// Script Ori By BochilGaming
-// Ditulis Ulang Oleh ImYanXiao
-// Disesuaikan Oleh ShirokamiRyzen
-
 import { promises } from 'fs'
 import { join } from 'path'
 import { xpRange } from '../lib/levelling.js'
@@ -238,7 +234,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command }) => {
       }
     }, { quoted: fkon });
   } catch (e) {
-    conn.reply(m.chat, 'Maaf, menu sedang error', m)
+    conn.reply(m.chat, '> Erro ao gerar o menu', m)
     throw e
   }
 }

@@ -26,7 +26,7 @@ global.APIs = {
 global.APIKeys = {
     // Suas chaves de APIs externas correspondentes
 }
-global.thumbnailUrl = 'https://i.ibb.co/HDdvpMhk/Frame-1.jpg' // Thumbnail Canvas do Menu
+global.thumbnailUrl = ['https://i.ibb.co/HDdvpMhk/Frame-1.jpg'] // Thumbnail Canvas do Menu
 
 let file = fileURLToPath(import.meta.url)
 watchFile(file, () => {
