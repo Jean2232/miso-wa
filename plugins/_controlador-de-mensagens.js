@@ -33,34 +33,34 @@ handler.all = async function (m) {
         global.ftroli = { key: { remoteJid: 'status@broadcast', participant: '0@s.whatsapp.net' }, message: { orderMessage: { itemCount: 9999999999999999999999999999999999999999999999999999999, status: 1, surface: 1, message: wm, orderTitle: wm, sellerJid: '0@s.whatsapp.net' } } };
 
         // Contato Falso
-        global.fkontak = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: `status@broadcast` } : {}) }, message: { contactMessage: { displayName: wm, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:XL;${wm},;;;\nFN:${wm},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabell:Ponsel\nEND:VCARD`, jpegThumbnail: fs.readFileSync('src/'), thumbnail: fs.readFileSync('src/'), sendEphemeral: true } } };
+        global.fkontak = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: `status@broadcast` } : {}) }, message: { contactMessage: { displayName: wm, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:XL;${wm},;;;\nFN:${wm},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabell:Ponsel\nEND:VCARD`, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg'), thumbnail: fs.readFileSync('src/thumbnail.jpg'), sendEphemeral: true } } };
 
         // Áudio Falso
         global.fvn = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538-1625305606@g.us" } : {}) }, message: { audioMessage: { mimetype: "audio/ogg; codecs=opus", seconds: "999999999999", ptt: "true" } } };
 
         // Texto Falso
-        global.ftextt = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538-1625305606@g.us" } : {}) }, message: { extendedTextMessage: { text: wm, title: wm, jpegThumbnail: fs.readFileSync('src/') } } };
+        global.ftextt = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538-1625305606@g.us" } : {}) }, message: { extendedTextMessage: { text: wm, title: wm, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') } } };
 
         // Localização em Tempo Real Falso
-        global.fliveLoc = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {}) }, message: { liveLocationMessage: { caption: "by : WH MODS DEV", h: `${wm}`, jpegThumbnail: fs.readFileSync('src/') } } };
+        global.fliveLoc = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {}) }, message: { liveLocationMessage: { caption: "by : WH MODS DEV", h: `${wm}`, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') } } };
 
         // Localização em Tempo Real Falso 2
-        global.fliveLoc2 = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {}) }, message: { liveLocationMessage: { title: "WH MODS DEV", h: wm, jpegThumbnail: fs.readFileSync('src/') } } };
+        global.fliveLoc2 = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {}) }, message: { liveLocationMessage: { title: "WH MODS DEV", h: wm, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') } } };
 
         // Produto falso (usado em menus interativos)
-        global.ftoko = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538@s.whatsapp.net" } : {}) }, message: { productMessage: { product: { productImage: { mimetype: "image/jpeg", jpegThumbnail: fs.readFileSync('src/') }, title: wm, description: "Simple Bot Esm", currencyCode: "USD", priceAmount1000: "20000000", retailerId: "Ghost", productImageCount: 1 }, businessOwnerJid: `0@s.whatsapp.net` } } };
+        global.ftoko = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538@s.whatsapp.net" } : {}) }, message: { productMessage: { product: { productImage: { mimetype: "image/jpeg", jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') }, title: wm, description: "Simple Bot Esm", currencyCode: "USD", priceAmount1000: "20000000", retailerId: "Ghost", productImageCount: 1 }, businessOwnerJid: `0@s.whatsapp.net` } } };
 
         // Documento Falso
-        global.fdocs = { key: { participant: '0@s.whatsapp.net' }, message: { documentMessage: { title: wm, jpegThumbnail: fs.readFileSync('src/') } } }
+        global.fdocs = { key: { participant: '0@s.whatsapp.net' }, message: { documentMessage: { title: wm, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') } } }
 
         // Link de Convite Falso
-        global.fgclink = { key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "0@s.whatsapp.net" }, message: { groupInviteMessage: { groupJid: "6282127487538-1625305606@g.us", inviteCode: "null", groupName: "Kawan WH MODS DEV", caption: wm, jpegThumbnail: fs.readFileSync('src/') } } };
+        global.fgclink = { key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "0@s.whatsapp.net" }, message: { groupInviteMessage: { groupJid: "6282127487538-1625305606@g.us", inviteCode: "null", groupName: "Kawan WH MODS DEV", caption: wm, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') } } };
 
         // Docx, Xsl, PDF
         global.doc = pickRandom(["application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/msword", "application/pdf"])
 
         // Vídeo enviado como se fosse um GIF
-        global.fgif = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538-1625305606@g.us" } : {}) }, message: { videoMessage: { title: wm, h: `Hmm`, seconds: '999999999', gifPlayback: 'true', caption: wm, jpegThumbnail: fs.readFileSync('src/') } } };
+        global.fgif = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "6282127487538-1625305606@g.us" } : {}) }, message: { videoMessage: { title: wm, h: `Hmm`, seconds: '999999999', gifPlayback: 'true', caption: wm, jpegThumbnail: fs.readFileSync('src/thumbnail.jpg') } } };
     }
 }
 
