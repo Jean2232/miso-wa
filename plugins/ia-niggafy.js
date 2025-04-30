@@ -11,7 +11,7 @@ let handler = async (m, { conn, args }) => {
     pp = 'https://i.ibb.co/3kM7ZrR/avatar.png' // fallback
   }
 
-  const url = `https://api.nekorinn.my.id/tools/niggafy?imageUrl=${encodeURIComponent(pp)}`
+  const url = `https://apizell.web.id/ai/hitamkan2?imageUrl=${encodeURIComponent(pp)}`
 
   try {
     let res = await fetch(url)
