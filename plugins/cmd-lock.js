@@ -1,11 +1,11 @@
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-    if (!m.quoted) throw 'Reply Pesan!'
-    if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
+    if (!m.quoted) throw 'Responda uma mensagem!'
+    if (!m.quoted.fileSha256) throw 'Hash SHA256 ausente'
     let sticker = db.data.sticker
     let hash = m.quoted.fileSha256.toString('hex')
-    if (!(hash in sticker)) throw 'Hash not found in database'
+    if (!(hash in sticker)) throw 'Hash não encontrado na base de dados'
     sticker[hash].locked = !/^un/i.test(command)
-    m.reply('Done!')
+    m.reply('Feito!')
 } 
 handler.help = ['un', ''].map(v => v + 'lockcmd')
 handler.tags = ['database']

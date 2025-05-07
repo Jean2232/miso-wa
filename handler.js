@@ -205,6 +205,7 @@ export async function handler(chatUpdate) {
         // Auto Sticker
         if (m.isGroup && global.db.data.chats[m.chat].autoSticker) {
             if (m.fromMe || m.mtype === 'stickerMessage') return
+            if (m.quoted || m.mtype === 'stickerMessage') return
             let q = (m.quoted && /image|video/.test((m.quoted.msg || m.quoted).mimetype || '')) ? m.quoted : m
             let mime = (q.msg || q).mimetype || q.mediaType || ''
             if (/image|video/.test(mime)) {
