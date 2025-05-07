@@ -5,7 +5,7 @@ let handler = async (m, { conn, text }) => {
   if (!text || !text.trim()) throw '❌ Informe um texto válido para gerar a figurinha animada.';
 
   try {
-    let url = `http://dark-hosting.com:3000/api/bratvid?text=${encodeURIComponent(text.trim())}`;
+    let url = `https://api.nekorinn.my.id/maker/bratvid?text=${encodeURIComponent(text.trim())}`;
 
     // Busca o vídeo da API
     let res = await fetch(url);

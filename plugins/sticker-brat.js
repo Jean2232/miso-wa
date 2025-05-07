@@ -5,7 +5,7 @@ let handler = async (m, { conn, text }) => {
   if (!text || !text.trim()) throw 'Insira um texto válido!';
 
   try {
-    let url = `http://dark-hosting.com:3000/api/brat?text=${encodeURIComponent(text.trim())}`;
+    let url = `https://api.nekorinn.my.id/maker/brat-v2?text=${encodeURIComponent(text.trim())}`;
 
     // Buscar imagem
     let res = await fetch(url);
