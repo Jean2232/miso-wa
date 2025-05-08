@@ -200,51 +200,6 @@ export async function handler(chatUpdate) {
           }
                    
         if (!isOwner && global.db.data.settings[this.user.jid]?.ownerOnly) { return }
-          
-
-        // Auto Sticker
-        if (m.isGroup && global.db.data.chats[m.chat].autoSticker) {
-            if (m.fromMe || m.mtype === 'stickerMessage') return
-            if (m.quoted || m.mtype === 'stickerMessage') return
-            let q = (m.quoted && /image|video/.test((m.quoted.msg || m.quoted).mimetype || '')) ? m.quoted : m
-            let mime = (q.msg || q).mimetype || q.mediaType || ''
-            if (/image|video/.test(mime)) {
-              try {
-                let img = await q.download?.()
-                if (!img) return
-          
-                let stiker = false
-                if (/video/.test(mime)) {
-                  if ((q.msg || q).seconds > 10) return
-                  try {
-                    stiker = await sticker(img, false, global.stickpack, global.stickauth)
-                  } catch (e) {
-                    console.error(e)
-                    return
-                  }
-                } else if (/image/.test(mime)) {
-                  try {
-                    stiker = await addExif(img, global.stickpack, global.stickauth)
-                  } catch (e) {
-                    console.error(e)
-                    stiker = await (new Sticker(img, {
-                      type: 'full',
-                      pack: global.stickpack,
-                      author: global.stickauth
-                    })).toBuffer()
-                  }
-                }
-          
-                if (stiker) {
-                  return await this.sendFile(m.chat, stiker, 'sticker.webp', '', m, null)
-                }
-          
-              } catch (e) {
-                console.error(e)
-              }
-              return null
-            }
-          }
 
         if (m.text && !(isMods || isPrems)) {
             let queque = this.msgqueque, time = 1000 * 5
