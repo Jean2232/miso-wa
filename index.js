@@ -11,15 +11,17 @@ import { watchFile, unwatchFile } from 'fs';
 const { say } = cfonts;
 const rl = createInterface(process.stdin, process.stdout);
 const __dirname = dirname(fileURLToPath(import.meta.url));
+import { wchks } from './lib/wchk.js';
 const require = createRequire(__dirname);
 const { name, author } = require(join(__dirname, './package.json'));
 
-say('Lightweight\nWhatsApp Bot', { font: 'chrome', align: 'center', gradient: ['red', 'magenta'] });
+say('Miso-Wa\nv2.0.1', { font: 'chrome', align: 'center', gradient: ['red', 'magenta'] });
 say(`'${name}' By @${author.name || author}`, { font: 'console', align: 'center', gradient: ['red', 'magenta'] });
-
-console.log('🐾 Starting...'); 
+say('dark-hosting.com', { font: 'chrome', align: 'center', gradient: ['red', 'magenta'] });
+console.log('Iniciando...'); 
 
 var isRunning = false;
+await wchks();
 
 /**
  * Start a js file
@@ -36,7 +38,7 @@ function start(file) {
   let p = fork();
 
   p.on('message', data => {
-    console.log('[✅RECEIVED]', data);
+    console.log('[✅Recebida]', data);
     switch (data) {
       case 'reset':
         p.kill(); // Change here
@@ -47,15 +49,15 @@ function start(file) {
         p.send(process.uptime());
         break;
       default:
-          console.warn('[⚠️ UNRECOGNIZED MESSAGE]', data);
+          console.warn('[⚠️ Mensagem não reconhecida]', data);
     }
   });
 
   p.on('exit', (_, code) => {
     isRunning = false;
-    console.error('[❗] Exited with code:', code);
+    console.error('[❗] Falha com o codigo:', code);
     if (code !== 0) {
-      console.log('[🔄 Restarting worker due to non-zero exit code...');
+      console.log('Reiniciando');
       return start(file);
     }
     

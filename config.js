@@ -32,6 +32,7 @@ global.APIKeys = {
 }
 global.thumbnailUrl = ['https://i.ibb.co/HDdvpMhk/Frame-1.jpg'] // Thumbnail Canvas do Menu
 
+//////////\\\\\\\\\\//////////\\\\\\\\\\
 let file = fileURLToPath(import.meta.url)
 watchFile(file, () => {
     unwatchFile(file)

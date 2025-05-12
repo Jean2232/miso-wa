@@ -32,6 +32,9 @@ async function addExif(webpSticker, packname, author, categories = [''], extra =
       'emojis': categories,
       ...extra
     };
+    const more = String.fromCharCode(8206)
+    const readMore = more.repeat(4001);
+    global.readMore = readMore
   
     const exifAttr = Buffer.from([0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00]);
     const jsonBuffer = Buffer.from(JSON.stringify(json), 'utf8');
