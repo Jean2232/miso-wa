@@ -16,7 +16,7 @@ if (warn < 2) {
     global.db.data.users[mention].warn = 0
     m.reply('Até logo!')
     await time(5000)
-    await conn.groupRemove(m.chat, [mention])
+    await conn.groupParticipantsUpdate(m.chat, [mention], 'remove')
     m.reply(`Você foi removido do grupo ${groupMetadata.subject} por ter recebido 3 advertências.`, mention)
 
     }
