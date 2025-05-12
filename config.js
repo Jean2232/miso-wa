@@ -18,9 +18,7 @@ global.watermark = '© Miso-MD pwrd by dark-hosting.com' // Márca D'água
 global.wm = watermark // Márca D'água 2
 global.sgw = 'https://dark-hosting.com' // Recado
 global.sgc = 'https://whatsapp.com/channel/00' // Canal do Bot
-const more = String.fromCharCode(8206)
-const readMore = more.repeat(4001);
-global.readMore = readMore
+
 
 //══════════ ❏ API KEYS E SERVIÇOS ❏ ══════════//
 global.APIs = {

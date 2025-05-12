@@ -369,7 +369,7 @@ export async function handler(chatUpdate) {
                 else
                     m.exp += xp
                 if (plugin.level > _user.level) {
-                    this.reply(m.chat, `[💬] Diperlukan level ${plugin.level} untuk menggunakan perintah ini\n*Level mu:* ${_user.level} 📊`, m)
+                    this.reply(m.chat, `[💬] É necessário nível ${plugin.level} para usar este comando\nSeu nível: ${_user.level} 📊`, m)
                     continue // If the level has not been reached
                 }
                 let extra = {
@@ -424,8 +424,6 @@ export async function handler(chatUpdate) {
                             console.error(e)
                         }
                     }
-                    if (m.limit)
-                        m.reply(+m.limit + ' Limit kamu terpakai')
                 }
                 break
             }
