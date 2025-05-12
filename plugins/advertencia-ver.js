@@ -1,5 +1,5 @@
 let handler = async (m, { conn, usedPrefix }) => {
-    let warning = global.db.data.users[m.sender].warning
+    let warning = global.db.data.users[m.sender].warn || 0
 
     let msg = `
 *Você possui ${warning} advertência(s).*

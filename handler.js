@@ -45,6 +45,10 @@ async function addExif(webpSticker, packname, author, categories = [''], extra =
     img.exif = exif;
     return img.save(null);
   }
+  for (let id in global.db.data.users) {
+  if (!isNumber(global.db.data.users[id].warn)) global.db.data.users[id].warn = 0
+}
+
 export async function handler(chatUpdate) {
     this.msgqueque = this.msgqueque || []
     if (!chatUpdate)
@@ -71,6 +75,7 @@ export async function handler(chatUpdate) {
                     user.exp = 0
                 if (!isNumber(user.limit))
                     user.limit = 10
+                if (!isNumber(user.warn)) user.warn = 0
                 if (!isNumber(user.afk))
                     user.afk = -1
                 if (!('afkReason' in user))
@@ -100,6 +105,7 @@ export async function handler(chatUpdate) {
                     level: 0,
                     role: 'Free user',
                     autolevelup: true,
+                    warn: 0,
                 }
             let chat = global.db.data.chats[m.chat]
             if (typeof chat !== 'object')
