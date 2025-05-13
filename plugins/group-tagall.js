@@ -1,41 +1,46 @@
 import { generateWAMessageFromContent } from '@adiwajshing/baileys'
 
-let handler = async (m, { conn, text, participants, isAdmin, isOwner }) => {
-    let users = participants.map(u => u.id).filter(v => v !== conn.user.jid)
+let handler = async (m, { conn, text, participants }) => {
+  const users = participants
+    .map(u => u.id)
+    .filter(v => v && v !== conn.user.jid)
 
-    if (text || m.quoted?.text) {
-        m.reply(`📝 *Mensagem*:\n_${text ? `${text}_` : ''}\n\n👥 *Mencionando todos:*\n\n` +
-            '┌──「 *Tag All* 」\n' +
-            users.map(v => '│◦❒ @' + v.replace(/@.+/, '')).join('\n') +
-            '\n└────', null, {
-                mentions: users
-            })
+  if (text || m.quoted?.text) {
+    const mensagem = `📢 *Tag All*\n\n🗒️ ${text ? text : m.quoted?.text}\n\n` +
+      users.map(v => `➤ @${v.replace(/@.+/, '')}`).join('\n')
 
-        let usersDecode = participants.map(u => conn.decodeJid(u.id))
-        let q = m.quoted ? m.quoted : m
-        let c = m.quoted ? m.quoted : m.msg
-        const msg = conn.cMod(m.chat,
-            generateWAMessageFromContent(m.chat, {
-                [c.toJSON ? q.mtype : 'extendedTextMessage']: c.toJSON ? c.toJSON() : {
-                    text: c || ''
-                }
-            }, {
-                quoted: m,
-                userJid: conn.user.jid
-            }),
-            text || q.text, conn.user.jid, { mentions: usersDecode }
-        )
+    await m.reply(mensagem, null, { mentions: users })
 
-        await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+    // Reconstrói e reenvia a mensagem com menções reais (para notificar)
+    const quoted = m.quoted || m
+    const msg = conn.cMod(
+      m.chat,
+      generateWAMessageFromContent(
+        m.chat,
+        {
+          [quoted.mtype || 'extendedTextMessage']: quoted.toJSON ? quoted.toJSON() : {
+            text: quoted.text || ''
+          }
+        },
+        {
+          quoted: m,
+          userJid: conn.user.jid
+        }
+      ),
+      text || quoted.text,
+      conn.user.jid,
+      { mentions: users }
+    )
 
-    } else {
-        m.reply("❗ Responda uma mensagem ou digite algo para mencionar todos.")
-    }
+    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+  } else {
+    m.reply('❗️Responda uma mensagem ou digite o texto que deseja enviar ao mencionar todos.')
+  }
 }
 
-handler.help = ['tagall', 'marcar']
+handler.help = ['tagall']
 handler.tags = ['group']
-handler.command = ['tagall', 'marcar']
+handler.command = ['tagall']
 handler.admin = true
 handler.group = true
 

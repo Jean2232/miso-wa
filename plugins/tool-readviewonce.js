@@ -26,8 +26,7 @@ let handler = async (m) => {
   
   handler.help = ['read <visualização única>', 'revelar <visualização única>']
   handler.tags = ['tools']
-  handler.command = /^read|revelar$/i
-  handler.register = true
+  handler.command = /^(read|revelar)$/i
   
   export default handler
   
