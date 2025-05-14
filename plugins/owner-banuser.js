@@ -15,9 +15,9 @@ let handler = async (m, { conn, text }) => {
         throw 'Usuário não encontrado.'
     }
 }
-handler.help = ['ban']
+handler.help = ['banuser @']
 handler.tags = ['owner']
-handler.command = /^ban(user)?$/i
+handler.command = /^banuser?$/i
 handler.rowner = true
 
 export default handler

@@ -8,8 +8,6 @@ let handler = async (m, { conn, participants, isAdmin }) => {
 
     }
 
-    // Se tiver mensagem respondida, pegar o autor
-
     let users = m.mentionedJid.length 
 
         ? m.mentionedJid.filter(u => !areJidsSameUser(u, conn.user.id))
@@ -40,11 +38,11 @@ let handler = async (m, { conn, participants, isAdmin }) => {
 
 }
 
-handler.help = ['kick @usuario ou (responder mensagem)']
+handler.help = ['kick @usuario ou (responder mensagem)', 'ban @usuario ou (responder mensagem)']
 
 handler.tags = ['group']
 
-handler.command = /^(kick|ban|-|\?)$/i
+handler.command = /^(kick|ban\?)$/i
 
 handler.owner = false
 
