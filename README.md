@@ -1,4 +1,4 @@
-# 🤖 Bot WhatsApp Multi-Funções — Documentação
+# 🤖 Misö-Wa 2.1 — Documentação
 
 Este projeto é um bot para WhatsApp com suporte a múltiplos comandos, incluindo IA, download de mídias, ferramentas de imagem, segurança de grupo e muito mais. Desenvolvido para ser modular e facilmente expandível.
 
@@ -8,7 +8,6 @@ Este projeto é um bot para WhatsApp com suporte a múltiplos comandos, incluind
 
 - Node.js 16 ou superior
 - `ffmpeg`, `imagemagick` (para funções de imagem e stickers)
-- Banco de dados local (`database.json`)
 - Dependências instaladas via `npm install`
 
 ---
@@ -62,8 +61,7 @@ Este projeto é um bot para WhatsApp com suporte a múltiplos comandos, incluind
 ## 📦 Instalação de Dependências
 
 ```bash
-npm install
-npm install nayan-videos-downloader
+pkg install ffmpeg nodejs imagemagick webp
 ```
 
 ---
@@ -78,11 +76,5 @@ Edite o arquivo `config.js` com suas credenciais e preferências.
 
 - Os plugins podem ser atualizados ou desativados simplesmente movendo os arquivos na pasta `plugins/`.
 - O banco `database.json` é atualizado automaticamente, mas deve ser salvo com `global.db.write()` para persistência.
-
----
-
-## 👤 Autor
-
-Desenvolvido por Jean com base no framework Nao-MD.
 
 ---
