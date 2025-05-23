@@ -45,9 +45,6 @@ async function addExif(webpSticker, packname, author, categories = [''], extra =
     img.exif = exif;
     return img.save(null);
   }
-  for (let id in global.db.data.users) {
-  if (!isNumber(global.db.data.users[id].warn)) global.db.data.users[id].warn = 0
-}
 
 export async function handler(chatUpdate) {
     this.msgqueque = this.msgqueque || []

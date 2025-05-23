@@ -58,6 +58,7 @@ import {
 
 const { CONNECTING } = ws
 const { chain } = lodash
+const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
 
 protoType()
 serialize()
@@ -71,7 +72,7 @@ global.timestamp = {
 const __dirname = global.__dirname(import.meta.url)
 
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
-
+global.prefix = new RegExp('^[' + (opts['prefix'] || '‎xzXZ/i!#$%+£¢€¥^°=¶∆×÷π√✓©®:;?&.\\-').replace(/[|\\{}()[\]^$+*?.\-\^]/g, '\\$&') + ']')
 
 global.db = new Low(
   /https?:\/\//.test(opts['db'] || '') ?
@@ -173,6 +174,35 @@ if (usePairingCode && !conn.authState.creds.registered) {
     console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)))
   }, 3000)
 }
+async function resetLimit() {
+  try {
+    let list = Object.entries(global.db.data.users);
+    let lim = 25; // Nilai limit default yang ingin di-reset
+
+    list.map(([user, data], i) => {
+      // Hanya reset limit jika limit saat ini <= 25
+      if (data.limit <= lim) {
+        data.limit = lim;
+      }
+    });
+
+    // logs bahwa reset limit telah sukses
+    console.log(`Success Auto Reset Limit`)
+  } finally {
+    // Setel ulang fungsi reset setiap 24 jam (1 hari)
+    setInterval(() => resetLimit(), 1 * 86400000);
+  }
+}
+
+if (!opts['test']) {
+  (await import('./server.js')).default(PORT)
+  setInterval(async () => {
+    if (global.db.data) await global.db.write().catch(console.error)
+    // if (opts['autocleartmp']) try {
+    clearTmp()
+    //  } catch (e) { console.error(e) }
+  }, 60 * 1000)
+}
 
 function clearTmp() {
   const tmp = [tmpdir(), join(__dirname, './tmp')]
@@ -218,23 +248,23 @@ async function connectionUpdate(update) {
   }
 
   if (connection == 'connecting') {
-    console.log(chalk.redBright('⚡ Ativando o Bot, por favor aguarde...'));
+    console.log(chalk.redBright('⚡ Ativando o Bot, por favor aguarde......'));
   } else if (connection == 'open') {
     console.log(chalk.green('✅ Conectado'));
   }
-  
+
   if (isOnline == true) {
     console.log(chalk.green('Status: Ativo'));
   } else if (isOnline == false) {
     console.log(chalk.red('Status: Inativo'));
   }
-  
+
   if (receivedPendingNotifications) {
     console.log(chalk.yellow('Aguardando novas mensagens'));
   }
-  
+
   if (connection == 'close') {
-    console.log(chalk.red('⏱️ Conexão perdida. Tentando reconectar...'));
+    console.log(chalk.red('⏱️ Conexão perdida. Tentando reconectar......'));
   }
 
   global.timestamp.connect = new Date;
@@ -254,8 +284,14 @@ process.on('uncaughtException', console.error)
 let isInit = true
 let handler = await import('./handler.js')
 global.reloadHandler = async function (restatConn) {
+  /*try {
+      const Handler = await import(`./handler.js?update=${Date.now()}`).catch(console.error)*/
   try {
+    // Jika anda menggunakan replit, gunakan yang sevenHoursLater dan tambahkan // pada const Handler
+    // Default: server/vps/panel, replit + 7 jam buat jam indonesia Jika Tidak Faham Pakai Milidetik 3600000 = 1 Jam Dan Kalikan 7 = 25200000
+    // const sevenHoursLater = Dateindonesia 7 * 60 * 60 * 1000;
     const Handler = await import(`./handler.js?update=${Date.now()}`).catch(console.error)
+    // const Handler = await import(`./handler.js?update=${sevenHoursLater}`).catch(console.error)
     if (Object.keys(Handler || {}).length) handler = Handler
   } catch (e) {
     console.error(e)
@@ -288,7 +324,6 @@ conn.sAnnounceOn = 'O grupo foi *fechado!*\nAgora apenas administradores podem e
 conn.sAnnounceOff = 'O grupo foi *aberto!*\nAgora todos os participantes podem enviar mensagens.'
 conn.sRestrictOn = 'Permissões de edição de informações do grupo alteradas para *apenas administradores*!'
 conn.sRestrictOff = 'Permissões de edição de informações do grupo alteradas para *todos os participantes*!'
-
 
   conn.handler = handler.handler.bind(global.conn)
   conn.participantsUpdate = handler.participantsUpdate.bind(global.conn)
@@ -411,7 +446,6 @@ async function _quickTest() {
   if (!s.convert && !s.magick && !s.gm) {
     conn.logger.warn('A funcionalidade de stickers pode não funcionar corretamente. O ImageMagick ou libwebp no ffmpeg não estão instalados (pkg install imagemagick).');
   }
-  
 }
 
 _quickTest()
