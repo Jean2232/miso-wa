@@ -1,4 +1,4 @@
-import { toAudio } from '../lib/converter.js'
+import { toMP3 } from '../lib/converter.js'
 
 let handler = async (m, { conn, usedPrefix, command }) => {
     let chat = global.db.data.chats[m.chat]
@@ -10,11 +10,11 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     let media = await q.download?.()
     if (!media) throw 'Não foi possível baixar a mídia.'
 
-    let audio = await toAudio(media, 'mp4')
-    if (!audio.data) throw 'Não foi possível converter a mídia para áudio.'
+    let audio = await toMP3(media, 'mp4')
+    if (!audio.data) throw 'Não foi possível converter a mídia para MP3.'
 
     conn.sendFile(m.chat, audio.data, 'audio.mp3', '', m, null, {
-        mimetype: 'audio/mp4',
+        mimetype: 'audio/mpeg',
         asDocument: chat.useDocument
     })
 }
@@ -25,4 +25,3 @@ handler.command = /^to(mp3|a(udio)?)$/i
 handler.register = true
 
 export default handler
-//script por Ryzen

@@ -103,7 +103,7 @@ global.loadDatabase = async function loadDatabase() {
   global.db.chain = chain(db.data)
 }
 loadDatabase()
-const usePairingCode = false
+const usePairingCode = !process.argv.includes('--use-pairing-code')
 const useMobile = process.argv.includes('--mobile')
 
 var question = function (text) {
