@@ -7,6 +7,9 @@ import chalk from 'chalk'
 import knights from 'knights-canvas'
 import fetch from 'node-fetch'
 import * as crypto from 'crypto';
+const more = String.fromCharCode(8206)
+const readMore = more.repeat(4001)
+global.readMore = readMore
 
 /**
  * @type {import('@adiwajshing/baileys')}

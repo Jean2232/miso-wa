@@ -1,14 +1,4 @@
-/* If You Copy, Don`t Delete This Credit!!! 
-  Don`t Sell This Script Or I Take Immediately 
-  Yang Jual Script Ini Report/Hangusin Aja Akunnya Atau Pukulin ae orangnya
-  Move To Pairing Code
-  Buat Yg Nggk muncul Codenya Itu Disebabkan Oleh Banyaknya Plugins
-  Jika Ingin Mengambil Sesi, Backup Semua File Plugins & Hapus Semua File Plugins
-  Setelah Sudah Kalian Bisa Mengembalikan Semua File Pluginsnya Agar Bisa Dipakai
-  Regards from YanXiao ♡
-*/
 
-// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
 
 import './config.js'
@@ -18,19 +8,10 @@ import { platform } from 'process'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { createRequire } from 'module'
 global.__filename = function filename(pathURL = import.meta.url, rmPrefix = platform !== 'win32') { return rmPrefix ? /file:\/\/\//.test(pathURL) ? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString() }; global.__dirname = function dirname(pathURL) { return path.dirname(global.__filename(pathURL, true)) }; global.__require = function require(dir = import.meta.url) { return createRequire(dir) }
-import {
-  readdirSync,
-  statSync,
-  unlinkSync,
-  existsSync,
-  readFileSync,
-  watch
-} from 'fs'
-
+import { readdirSync, statSync, unlinkSync, existsSync, readFileSync, watch } from 'fs'
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 const argv = yargs(hideBin(process.argv)).argv;
-
 import { spawn } from 'child_process'
 import lodash from 'lodash'
 import syntaxerror from 'syntax-error'
@@ -40,22 +21,11 @@ import readline from 'readline'
 import { format } from 'util'
 import pino from 'pino'
 import ws from 'ws'
-const {
-  useMultiFileAuthState,
-  DisconnectReason,
-  fetchLatestBaileysVersion,
-  makeInMemoryStore,
-  makeCacheableSignalKeyStore,
-  PHONENUMBER_MCC
-} = await import('@adiwajshing/baileys')
+const { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, makeInMemoryStore, makeCacheableSignalKeyStore, PHONENUMBER_MCC } = await import('@adiwajshing/baileys')
 import { Low, JSONFile } from 'lowdb'
 import { makeWASocket, protoType, serialize } from './lib/simple.js'
 import cloudDBAdapter from './lib/cloudDBAdapter.js'
-import {
-  mongoDB,
-  mongoDBV2
-} from './lib/mongoDB.js'
-
+import { mongoDB, mongoDBV2 } from './lib/mongoDB.js'
 const { CONNECTING } = ws
 const { chain } = lodash
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
@@ -64,16 +34,9 @@ protoType()
 serialize()
 
 global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '')
-// global.Fn = function functionCallBack(fn, ...args) { return fn.call(global.conn, ...args) }
-global.timestamp = {
-  start: new Date
-}
-
+global.timestamp = { start: new Date }
 const __dirname = global.__dirname(import.meta.url)
-
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
-global.prefix = new RegExp('^[' + (opts['prefix'] || '‎xzXZ/i!#$%+£¢€¥^°=¶∆×÷π√✓©®:;?&.\\-').replace(/[|\\{}()[\]^$+*?.\-\^]/g, '\\$&') + ']')
-
 global.db = new Low(
   /https?:\/\//.test(opts['db'] || '') ?
     new cloudDBAdapter(opts['db']) : /mongodb(\+srv)?:\/\//i.test(opts['db']) ?
@@ -104,6 +67,7 @@ global.loadDatabase = async function loadDatabase() {
   global.db.chain = chain(db.data)
 }
 loadDatabase()
+
 const usePairingCode = !process.argv.includes('--use-pairing-code')
 const useMobile = process.argv.includes('--mobile')
 
@@ -120,8 +84,6 @@ const connectionOptions = {
   version,
   logger: pino({ level: 'silent' }),
   printQRInTerminal: !usePairingCode,
-  // Optional If Linked Device Could'nt Connected
-  // browser: ['Mac OS', 'chrome', '125.0.6422.53']
   browser: ['Mac OS', 'safari', '5.1.10'],
   auth: {
     creds: state.creds,
@@ -174,33 +136,12 @@ if (usePairingCode && !conn.authState.creds.registered) {
     console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)))
   }, 3000)
 }
-async function resetLimit() {
-  try {
-    let list = Object.entries(global.db.data.users);
-    let lim = 25; // Nilai limit default yang ingin di-reset
-
-    list.map(([user, data], i) => {
-      // Hanya reset limit jika limit saat ini <= 25
-      if (data.limit <= lim) {
-        data.limit = lim;
-      }
-    });
-
-    // logs bahwa reset limit telah sukses
-    console.log(`Success Auto Reset Limit`)
-  } finally {
-    // Setel ulang fungsi reset setiap 24 jam (1 hari)
-    setInterval(() => resetLimit(), 1 * 86400000);
-  }
-}
 
 if (!opts['test']) {
   (await import('./server.js')).default(PORT)
   setInterval(async () => {
     if (global.db.data) await global.db.write().catch(console.error)
-    // if (opts['autocleartmp']) try {
     clearTmp()
-    //  } catch (e) { console.error(e) }
   }, 60 * 1000)
 }
 
@@ -284,14 +225,8 @@ process.on('uncaughtException', console.error)
 let isInit = true
 let handler = await import('./handler.js')
 global.reloadHandler = async function (restatConn) {
-  /*try {
-      const Handler = await import(`./handler.js?update=${Date.now()}`).catch(console.error)*/
   try {
-    // Jika anda menggunakan replit, gunakan yang sevenHoursLater dan tambahkan // pada const Handler
-    // Default: server/vps/panel, replit + 7 jam buat jam indonesia Jika Tidak Faham Pakai Milidetik 3600000 = 1 Jam Dan Kalikan 7 = 25200000
-    // const sevenHoursLater = Dateindonesia 7 * 60 * 60 * 1000;
     const Handler = await import(`./handler.js?update=${Date.now()}`).catch(console.error)
-    // const Handler = await import(`./handler.js?update=${sevenHoursLater}`).catch(console.error)
     if (Object.keys(Handler || {}).length) handler = Handler
   } catch (e) {
     console.error(e)
@@ -312,19 +247,18 @@ global.reloadHandler = async function (restatConn) {
     conn.ev.off('creds.update', conn.credsUpdate)
   }
 
-  conn.welcome = '❖━━━━━━[ Bem-Vindo(a) ]━━━━━━❖\n\n┏––––––━━━━━━━━•\n│☘︎ @subject\n┣━━━━━━━━┅┅┅\n│( 👋 Olá @user)\n├[ Apresentação ]—\n│ NOME: \n│ IDADE: \n│ GÊNERO:\n┗––––––━━┅┅┅\n\n––––––┅┅ DESCRIÇÃO ┅┅––––––\n@desc'
-conn.bye = '❖━━━━━━[ Saiu do Grupo ]━━━━━━❖\nAdeus @user 👋😃'
-conn.spromote = '@user agora é administrador!'
-conn.sdemote = '@user não é mais administrador!'
-conn.sDesc = 'A descrição do grupo foi alterada para:\n@desc'
-conn.sSubject = 'O nome do grupo foi alterado para:\n@subject'
-conn.sIcon = 'O ícone do grupo foi alterado!'
-conn.sRevoke = 'O link do grupo foi redefinido para:\n@revoke'
-conn.sAnnounceOn = 'O grupo foi *fechado!*\nAgora apenas administradores podem enviar mensagens.'
-conn.sAnnounceOff = 'O grupo foi *aberto!*\nAgora todos os participantes podem enviar mensagens.'
-conn.sRestrictOn = 'Permissões de edição de informações do grupo alteradas para *apenas administradores*!'
-conn.sRestrictOff = 'Permissões de edição de informações do grupo alteradas para *todos os participantes*!'
-
+  conn.welcome = global.welcome_text
+  conn.bye = global.bye_text
+  conn.spromote = global.spromote_text
+  conn.sdemote = global.sdemote_text
+  conn.sDesc = global.sDesc_text
+  conn.sSubject = global.sSubject_text
+  conn.sIcon = global.sIcon_text
+  conn.sRevoke = global.sRevoke_text
+  conn.sAnnounceOn = global.sAnnounceOn_text
+  conn.sAnnounceOff = global.sAnnounceOff_text
+  conn.sRestrictOn = global.sRestrictOn_text
+  conn.sRestrictOff = global.sRestrictOff_text
   conn.handler = handler.handler.bind(global.conn)
   conn.participantsUpdate = handler.participantsUpdate.bind(global.conn)
   conn.groupsUpdate = handler.groupsUpdate.bind(global.conn)
@@ -333,10 +267,10 @@ conn.sRestrictOff = 'Permissões de edição de informações do grupo alteradas
   conn.credsUpdate = saveCreds.bind(global.conn)
 
   conn.ev.on('call', async (call) => {
-    console.log('Panggilan diterima:', call);
+    console.log('Chamada recebida:', call);
     if (call.status === 'ringing') {
       await conn.rejectCall(call.id);
-      console.log('Panggilan ditolak');
+      console.log('Chamada rejeitada');
     }
   })
   conn.ev.on('messages.upsert', conn.handler)

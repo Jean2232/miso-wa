@@ -35,8 +35,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command }) => {
 
   let tags = {
     'main': 'Principal',
-    // 'anonymous': 'Anonymous Chat',
-    // 'stress': 'Stress',
+
     'ai': 'I.As',
     'memfess': 'Correio',
     'stalk': 'Stalkers',
@@ -122,12 +121,6 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command }) => {
 
     /**************************** TIME *********************/
     let wib = moment.tz('America/Sao_Paulo').format('HH:mm:ss')
-    let wibh = moment.tz('America/Sao_Paulo').format('HH')
-    let wibm = moment.tz('America/Sao_Paulo').format('mm')
-    let wibs = moment.tz('America/Sao_Paulo').format('ss')
-    let wit = moment.tz('America/Sao_Paulo').format('HH:mm:ss')
-    let wita = moment.tz('America/Sao_Paulo').format('HH:mm:ss')
-    let wktuwib = `${wibh} H ${wibm} M ${wibs} S`
 
     let mode = global.opts['self'] || global.opts['owneronly'] ? 'Private' : 'Publik'
     let _package = JSON.parse(await promises.readFile(join(__dirname, '../package.json')).catch(_ => ({}))) || {}
@@ -241,9 +234,6 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command }) => {
 handler.help = ['menu']
 handler.tags = ['main']
 handler.command = /^(allmenu|menu|help|\?)$/i
-
-handler.register = true
-handler.exp = 3
 
 export default handler
 
