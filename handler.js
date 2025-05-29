@@ -538,18 +538,18 @@ export async function participantsUpdate({ id, participants, action }) {
                             (chat.sBye || this.bye || conn.bye || 'Adeus, @user!')).replace('@user', `@` + user.split('@')[0])
                         let card_welcome = new Card()
                             .setTitle("Bem-Vindo")
-                            .setName((await this.getName(user)).slice(0, 14))
+                            .setName((await this.getName(user)).slice(0, 10))
                             .setAvatar(pp)
-                            .setMessage("Mensagem")
+                            .setMessage("Entrou no Grupo!")
                             .setBackground('./src/Welcome.jpg')
                             .setColor("1210D0"); // without #
                         let wel = await card_welcome.build();
                            
                         let card_leave = new Card()
                             .setTitle("Adeus")
-                            .setName((await this.getName(user)).slice(0, 14))
+                            .setName((await this.getName(user)).slice(0, 10))
                             .setAvatar(pp)
-                            .setMessage("Mensagem")
+                            .setMessage("Saiu do Grupo!")
                             .setBackground('./src/Welcome.jpg')
                             .setColor("1210D0"); // without #
                         let lea = await card_leave.build();
