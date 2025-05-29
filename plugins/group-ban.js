@@ -38,11 +38,11 @@ let handler = async (m, { conn, participants, isAdmin }) => {
 
 }
 
-handler.help = ['kick @usuario ou (responder mensagem)', 'ban @usuario ou (responder mensagem)']
+handler.help = ['ban @usuario ou (responder mensagem)']
 
 handler.tags = ['group']
 
-handler.command = /^(kick|ban\?)$/i
+handler.command = /^(ban\?)$/i
 
 handler.owner = false
 

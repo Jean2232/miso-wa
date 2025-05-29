@@ -1,45 +1,210 @@
-import ytSearch from 'yt-search'
-import pkg from 'nayan-videos-downloader'
+import axios from 'axios'
+import qs from 'qs'
 
-const { alldown } = pkg
+async function searchYouTube(query) {
+  const res = await axios.get('https://www.youtube.com/results', {
+    params: { search_query: query },
+    headers: { 'User-Agent': 'Mozilla/5.0' }
+  })
+  const videoId = res.data.match(/"videoId":"(.*?)"/)?.[1]
+  if (!videoId) throw 'Vídeo não encontrado'
+  return `https://www.youtube.com/watch?v=${videoId}`
+}
+async function ssvidDownloader(url, forceType = null) {
+  if (!/^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url))
+    throw 'URL não válida'
 
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) throw `❌ Use o comando assim:\n${usedPrefix}${command} <nome da música>`
+  // Busca as opções disponíveis
+  const res = await axios.post(
+    'https://ssvid.net/api/ajax/search',
+    qs.stringify({ query: url, vt: 'home' }),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }
+  )
 
-  m.reply('🔍 Buscando música...')
+  const data = res.data
+  if (!data || data.status !== 'ok')
+    throw 'Falha ao buscar dados do vídeo'
 
-  try {
-    const search = await ytSearch(text)
-    const video = search.videos[0]
+  const { title, a: author, t: duration, vid } = data
+  const thumbnail = `https://img.youtube.com/vi/${vid}/hqdefault.jpg`
+  const formats = []
 
-    if (!video || !video.url) throw '❌ Nenhum resultado encontrado.'
-
-    m.reply('⏳ Baixando áudio, aguarde...')
-
-    const result = await alldown(video.url)
-
-    if (!result.status || !result.data?.audio) throw '❌ Não foi possível baixar o áudio.'
-
-    const { title, thumbnail, duration, author } = video
-    const caption = `🎵 *${title}*\n📺 Canal: ${author.name}\n⏱️ Duração: ${duration}\n🔗 ${video.url}`
-
-    await conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
-      caption
-    }, { quoted: m })
-
-    await conn.sendFile(m.chat, result.data.audio, `${title}.mp3`, null, m, null, {
-      mimetype: 'audio/mpeg'
+  for (const q in data.links?.mp4 || {}) {
+    const v = data.links.mp4[q]
+    formats.push({
+      quality: v.q_text,
+      size: v.size,
+      format: v.f,
+      type: 'video',
+      k: v.k
     })
-  } catch (e) {
-    console.error(e)
-    throw '🚫 Erro ao buscar ou baixar o áudio.'
+  }
+
+  for (const q in data.links?.mp3 || {}) {
+    const a = data.links.mp3[q]
+    formats.push({
+      quality: a.q_text,
+      size: a.size,
+      format: a.f,
+      type: 'audio',
+      k: a.k
+    })
+  }
+
+  let selected = formats.find(f => f.quality.includes('360p')) || formats[0]
+  if (forceType === 'audio')
+    selected = formats.find(f => f.type === 'audio') || selected
+  if (forceType === 'video')
+    selected = formats.find(f => f.type === 'video') || selected
+
+  if (!selected || !selected.k)
+    throw 'Nenhum formato disponível para conversão'
+
+  const conv = await axios.post(
+    'https://ssvid.net/api/ajax/convert',
+    qs.stringify({ vid, k: selected.k }),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest',
+        Referer: 'https://ssvid.net/',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10)'
+      }
+    }
+  )
+
+  const converted = conv.data
+  const downloadUrl = converted?.url || converted?.dlink
+  if (!downloadUrl)
+    throw 'Falha ao converter a mídia'
+
+  return {
+    title,
+    author,
+    duration,
+    thumbnail,
+    download: {
+      url: downloadUrl,
+      format: selected.format,
+      quality: selected.quality,
+      size: selected.size,
+      type: selected.type
+    }
   }
 }
 
-handler.help = ['play <música>']
+const handler = async (m, { text, command, conn }) => {
+  if (!text)
+    throw 'Exemplo de uso:\n.play <música>\n.ytmp3 <url>\n.ytmp4 <url>'
+
+  if (command === 'play') {
+    const url = await searchYouTube(text)
+    const res = await ssvidDownloader(url, 'audio')
+    const caption = `🎶 Y O U T U B E - P L A Y\n
+🖊️ Título: ${res.title}
+✨ Autor: ${res.author}
+🕐 Duração: ${res.duration}
+📌 Qualidade: ${res.download.quality}`
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        text: caption,
+        contextInfo: {
+          externalAdReply: {
+            title: res.title,
+            body: 'Play Music 🧸',
+            thumbnailUrl: res.thumbnail,
+            sourceUrl: url,
+            mediaType: 1,
+            renderLargerThumbnail: true
+          }
+        }
+      },
+      { quoted: m }
+    )
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        audio: { url: res.download.url },
+        mimetype: 'audio/mp4',
+        ptt: false
+      },
+      { quoted: m }
+    )
+  }
+
+  if (command === 'ytmp3') {
+    if (!text.includes('youtu'))
+      throw 'Digite uma URL do YouTube válida'
+    const res = await ssvidDownloader(text, 'audio')
+    const caption = `🎶 Y O U T U B E - AUDIO\n
+🖊️ Título: ${res.title}
+✨ Autor: ${res.author}
+🕐 Duração: ${res.duration}
+📌 Qualidade: ${res.download.quality}`
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        text: caption,
+        contextInfo: {
+          externalAdReply: {
+            title: res.title,
+            body: 'YouTube Audio ✨',
+            thumbnailUrl: res.thumbnail,
+            sourceUrl: text,
+            mediaType: 1,
+            renderLargerThumbnail: true
+          }
+        }
+      },
+      { quoted: m }
+    )
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        audio: { url: res.download.url },
+        mimetype: 'audio/mp4',
+        ptt: false
+      },
+      { quoted: m }
+    )
+  }
+
+  if (command === 'ytmp4') {
+    if (!text.includes('youtu'))
+      throw 'Digite uma URL do YouTube válida'
+    const res = await ssvidDownloader(text, 'video')
+    const caption = `🎬 Y O U T U B E - VÍDEO\n
+🖊️ Título: ${res.title}
+✨ Autor: ${res.author}
+🕐 Duração: ${res.duration}
+📌 Qualidade: ${res.download.quality}`
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        video: { url: res.download.url },
+        mimetype: 'video/mp4',
+        caption
+      },
+      { quoted: m }
+    )
+  }
+
+  // Reação final
+  await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+}
+
+handler.help = handler.command = ['play', 'ytmp3', 'ytmp4']
 handler.tags = ['downloader']
-handler.command = /^play$/i
-handler.register = true
 
 export default handler
