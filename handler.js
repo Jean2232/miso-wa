@@ -7,6 +7,7 @@ import chalk from 'chalk'
 import knights from 'knights-canvas'
 import fetch from 'node-fetch'
 import * as crypto from 'crypto';
+import { Card } from 'welcomify'
 const more = String.fromCharCode(8206)
 const readMore = more.repeat(4001)
 global.readMore = readMore
@@ -514,48 +515,62 @@ export async function participantsUpdate({ id, participants, action }) {
           }
         }
       }
-        case 'remove':
-            if (chat.welcome) {
-                let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
-                for (let user of participants) {
-                    let nickgc = await conn.getName(id)
-                    let pp = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
-                    let ppgc = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
-                    let userName = user.split('@')[0];
-                    try {
-                        pp = await this.profilePictureUrl(user, 'image')
-                        ppgc = await this.profilePictureUrl(id, 'image')
-                        const userData = global.db.data.users[user.split('@')[0]];
-                        if (userData && userData.name) {
-                            userName = userData.name;
-                        }
+        case 'remove': {
+  if (!chat.welcome) break
 
-                    } catch (e) {
-                    } finally {
-                        text = (action === 'add' ?
-                            (chat.sWelcome || this.welcome || conn.welcome || 'Bem vindo, @user!').replace('@subject', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'unknown') :
-                            (chat.sBye || this.bye || conn.bye || 'Adeus, @user!')).replace('@user', `@` + user.split('@')[0])
-                        let wel = await new knights.Welcome2()
-                            .setAvatar(pp)
-                            .setUsername(this.getName(user))
-                            .setBg("https://i.ibb.co/HDdvpMhk/Frame-1.jpg")
-                            .setGroupname(groupMetadata.subject)
-                            .setMember(groupMetadata.participants.length)
-                            .toAttachment()
+  const { Card } = require('welcomify')
+  const path = require('path')
+  const defaultPic = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
+  const groupMetadata = await this.groupMetadata(id) 
+    || conn.chats[id]?.metadata
+  const { subject, desc, participants: membersCount } = groupMetadata
 
-                        let lea = await new knights.Goodbye()
-                            .setUsername(this.getName(user))
-                            .setGuildName(groupMetadata.subject)
-                            .setGuildIcon(ppgc)
-                            .setMemberCount(groupMetadata.participants.length)
-                            .setAvatar(pp)
-                            .setBackground("https://i.ibb.co/HDdvpMhk/Frame-1.jpg")
-                            .toAttachment()
+  for (const user of participants) {
+    const userId = user.split('@')[0]
+    const userData = global.db.data.users[userId] || {}
+    const userName = userData.name || userId
 
-                        this.sendFile(id, action === 'add' ? wel.toBuffer() : lea.toBuffer(), 'pp.jpg', text, null, false, { contextInfo: { mentionedJid: [user] } })
-                    }
-                }
-            }
+    // obtém avatares com fallback
+    const [ pp, ppgc ] = await Promise.all([
+      this.profilePictureUrl(user, 'image').catch(() => defaultPic),
+      this.profilePictureUrl(id,   'image').catch(() => defaultPic)
+    ])
+
+    // monta texto
+    const isAdd = action === 'add'
+    const template = isAdd
+      ? (chat.sWelcome || this.welcome || conn.welcome || 'Bem vindo, @user!')
+      : (chat.sBye     || this.bye     || conn.bye     || 'Adeus, @user!')
+    const text = template
+      .replace('@user',    `@${userId}`)
+      .replace('@subject', await this.getName(id))
+      .replace('@desc',    desc?.toString() ?? 'unknown')
+
+    // gera o cartão com welcomify
+    const card = new Card()
+      .setTitle(isAdd ? 'Bem-vindo' : 'Até logo!')
+      .setName(userName)
+      .setAvatar(pp)
+      .setMessage(text)
+      .setBackground(path.join(__dirname, './src/Welcome.jpeg'))
+      .setColor(isAdd ? '1210D0' : 'B303B9')
+
+    const buffer = await card.build()
+
+    // envia imagem + legenda, mencionando o usuário
+    this.sendFile(
+      id,
+      buffer,
+      'pp.jpg',
+      text,
+      null,
+      false,
+      { contextInfo: { mentionedJid: [ user ] } }
+    )
+  }
+
+  break
+}
             break
         case 'promote':
             text = (chat.sPromote || this.spromote || conn.spromote || '@user ```agora é um administrador```')
