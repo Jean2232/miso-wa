@@ -4,10 +4,10 @@ import { fileURLToPath } from 'url'
 import path, { join } from 'path'
 import { unwatchFile, watchFile, readFileSync } from 'fs'
 import chalk from 'chalk'
-import knights from 'knights-canvas'
 import fetch from 'node-fetch'
 import * as crypto from 'crypto';
-import { Card } from 'welcomify'
+import { Card } from './src/welcomeCanvas.js'
+
 const more = String.fromCharCode(8206)
 const readMore = more.repeat(4001)
 global.readMore = readMore
