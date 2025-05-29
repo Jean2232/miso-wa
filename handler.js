@@ -6,7 +6,7 @@ import { unwatchFile, watchFile, readFileSync } from 'fs'
 import chalk from 'chalk'
 import fetch from 'node-fetch'
 import * as crypto from 'crypto';
-import { Card } from './src/welcomeCanvas.js'
+import { Card } from './lib/welcomeCanvas.js'
 
 const more = String.fromCharCode(8206)
 const readMore = more.repeat(4001)
