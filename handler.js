@@ -554,7 +554,7 @@ export async function participantsUpdate({ id, participants, action }) {
                             .setColor("1210D0"); // without #
                         let lea = await card_leave.build();
 
-                        this.sendFile(id, action === 'add' ? wel.toBuffer() : lea.toBuffer(), 'pp.jpg', text, null, false, { contextInfo: { mentionedJid: [user] } })
+                        this.sendFile(id, action === 'add' ? wel : lea, 'pp.jpg', text, null, false, { contextInfo: { mentionedJid: [user] } })
                     }
                 }
             }
