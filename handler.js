@@ -538,7 +538,7 @@ export async function participantsUpdate({ id, participants, action }) {
                             (chat.sBye || this.bye || conn.bye || 'Adeus, @user!')).replace('@user', `@` + user.split('@')[0])
                         let card_welcome = new Card()
                             .setTitle("Bem-Vindo")
-                            .setName(this.getName(user))
+                            .setName((await this.getName(user)).slice(0, 14))
                             .setAvatar(pp)
                             .setMessage("Mensagem")
                             .setBackground('./src/Welcome.jpg')
@@ -547,7 +547,7 @@ export async function participantsUpdate({ id, participants, action }) {
                            
                         let card_leave = new Card()
                             .setTitle("Adeus")
-                            .setName(this.getName(user))
+                            .setName((await this.getName(user)).slice(0, 14))
                             .setAvatar(pp)
                             .setMessage("Mensagem")
                             .setBackground('./src/Welcome.jpg')
