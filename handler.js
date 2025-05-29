@@ -536,9 +536,10 @@ export async function participantsUpdate({ id, participants, action }) {
                         text = (action === 'add' ?
                             (chat.sWelcome || this.welcome || conn.welcome || 'Bem vindo, @user!').replace('@subject', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'unknown') :
                             (chat.sBye || this.bye || conn.bye || 'Adeus, @user!')).replace('@user', `@` + user.split('@')[0])
+                        let Username = getName(user).slice(0, 10)
                         let card_welcome = new Card()
                             .setTitle("Bem-Vindo")
-                            .setName((await this.getName(user)).slice(0, 10))
+                            .setName(Username)
                             .setAvatar(pp)
                             .setMessage("Entrou no Grupo!")
                             .setBackground('./src/Welcome.jpg')
@@ -546,10 +547,10 @@ export async function participantsUpdate({ id, participants, action }) {
                         let wel = await card_welcome.build();
                            
                         let card_leave = new Card()
-                            .setTitle("Adeus")
-                            .setName((await this.getName(user)).slice(0, 10))
+                            .setTitle("Saiu do Grupo!")
+                            .setName(Username)
                             .setAvatar(pp)
-                            .setMessage("Saiu do Grupo!")
+                            .setMessage(" ")
                             .setBackground('./src/Welcome.jpg')
                             .setColor("1210D0"); // without #
                         let lea = await card_leave.build();
