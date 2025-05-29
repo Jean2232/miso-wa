@@ -536,7 +536,9 @@ export async function participantsUpdate({ id, participants, action }) {
                         text = (action === 'add' ?
                             (chat.sWelcome || this.welcome || conn.welcome || 'Bem vindo, @user!').replace('@subject', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'unknown') :
                             (chat.sBye || this.bye || conn.bye || 'Adeus, @user!')).replace('@user', `@` + user.split('@')[0])
-                        let Username = getName(user).slice(0, 10).startsWith('+')  ? 'fulaninho' : getName(user).slice(0, 10);
+                        let Username = ((n) => n.startsWith('+') ? 'fulaninho' : n)(
+                            (await conn.getName(user)).slice(0, 10)
+                            );
                         let card_welcome = new Card()
                             .setTitle(Username)
                             .setName("Bem-Vindo!")
