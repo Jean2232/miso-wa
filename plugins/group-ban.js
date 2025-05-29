@@ -42,7 +42,8 @@ handler.help = ['ban @usuario ou (responder mensagem)']
 
 handler.tags = ['group']
 
-handler.command = /^(ban\?)$/i
+handler.command = 'ban'
+
 
 handler.owner = false
 
