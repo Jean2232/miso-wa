@@ -516,6 +516,11 @@ export async function participantsUpdate({ id, participants, action }) {
         }
       }
         case 'remove':
+            let numero = user.split('@')[0]
+            let ddi = numero.replace(/[^0-9]/g, '').slice(0, numero.length - 8)
+            let permitido = chat.allowed_ddi.some(ddiPermitido => ddi.startsWith(ddiPermitido))
+            if (!permitido) { return }
+            
             if (chat.welcome) {
                 let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
                 for (let user of participants) {
