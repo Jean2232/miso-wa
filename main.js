@@ -28,7 +28,6 @@ import cloudDBAdapter from './lib/cloudDBAdapter.js'
 import { mongoDB, mongoDBV2 } from './lib/mongoDB.js'
 const { CONNECTING } = ws
 const { chain } = lodash
-const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
 
 protoType()
 serialize()
@@ -135,14 +134,6 @@ if (usePairingCode && !conn.authState.creds.registered) {
     code = code?.match(/.{1,4}/g)?.join('-') || code
     console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)))
   }, 3000)
-}
-
-if (!opts['test']) {
-  (await import('./server.js')).default(PORT)
-  setInterval(async () => {
-    if (global.db.data) await global.db.write().catch(console.error)
-    clearTmp()
-  }, 60 * 1000)
 }
 
 function clearTmp() {
