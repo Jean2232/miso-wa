@@ -1,23 +1,37 @@
-import pkg from 'nayan-videos-downloader'
-const { alldown } = pkg
+import axios from 'axios'
 
-let handler = async (m, { conn, text, command, usedPrefix }) => {
-  if (!text) throw `❌ Envie a URL do vídeo.\n\nExemplo:\n${usedPrefix + command} https://...`
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) throw `❌ Envie a URL do vídeo.\n\nExemplo:\n${usedPrefix + command} https://www.tiktok.com/@exemplo/video/123`
 
-  m.reply('⏳ Baixando vídeo, aguarde...')
+  await m.reply('⏳ Baixando vídeo, aguarde...')
 
   try {
-    const result = await alldown(text)
+    // Faz a requisição à API pública
+    const res = await axios.get('https://nayan-video-downloader.vercel.app/alldown', {
+      params: { url: text }
+    })
+    const result = res.data
 
-    if (!result.status || !result.data?.low && !result.data?.high)
-      throw '❌ Não foi possível baixar o vídeo. Verifique a URL.'
+    // Validações básicas
+    if (!result.status || !result.data?.low) {
+      throw new Error('Resposta inválida da API')
+    }
 
-    let caption = `🎬 *${result.data.title || 'Vídeo'}*\n🔗 ${text}`
+    const { title, low, high } = result.data
+    const videoUrl = high || low
+    const caption = `🎬 *${title || 'Vídeo'}*\n\n🔗 Fonte: ${text}`
 
-    await conn.sendFile(m.chat, result.data.high || result.data.low, 'video.mp4', caption, m)
+    // Envia o vídeo
+    await conn.sendFile(
+      m.chat,
+      videoUrl,
+      'video.mp4',
+      caption,
+      m
+    )
   } catch (e) {
     console.error(e)
-    throw '❌ Erro ao baixar o vídeo.'
+    throw '❌ Erro ao baixar o vídeo. Verifique a URL e tente novamente.'
   }
 }
 
