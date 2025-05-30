@@ -516,11 +516,8 @@ export async function participantsUpdate({ id, participants, action }) {
         }
       }
         case 'remove':
-            let numero = user.split('@')[0]
-            let ddi = numero.replace(/[^0-9]/g, '').slice(0, numero.length - 8)
-            let permitido = chat.allowed_ddi.some(ddiPermitido => ddi.startsWith(ddiPermitido))
-            if (!permitido) { return }
-            
+            let raw_user = this.getName(user);
+            if(!raw_user.startsWith("+55")) { return };
             if (chat.welcome) {
                 let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
                 for (let user of participants) {
@@ -541,9 +538,10 @@ export async function participantsUpdate({ id, participants, action }) {
                         text = (action === 'add' ?
                             (chat.sWelcome || this.welcome || conn.welcome || 'Bem vindo, @user!').replace('@subject', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'unknown') :
                             (chat.sBye || this.bye || conn.bye || 'Adeus, @user!')).replace('@user', `@` + user.split('@')[0])
-                        let Username = ((n) => n.startsWith('+') ? 'fulaninho' : n)(
-                            (await conn.getName(user)).slice(0, 10)
-                            );
+                        let raw = this.getName(user);
+                        let Username = raw.startsWith('+')
+                        ? 'fulaninho'
+                        : raw.slice(0, 10);
                         let card_welcome = new Card()
                             .setTitle(Username)
                             .setName("Bem-Vindo!")
