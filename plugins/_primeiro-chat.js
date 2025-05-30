@@ -5,11 +5,7 @@ export async function before(m) {
 
     let user = global.db.data.users[m.sender]
 
-    if (new Date() - user.pc < 86400000) return // tempo original era 21600000 (6 horas)
-    await m.reply(`
-📮 Nota: Por favor, não faça spam com o bot
-⏩ Digite *.menu* para exibir o menu
-`)
+    if (new Date() - user.pc < 86400000) return
     user.pc = new Date * 1
 }
 

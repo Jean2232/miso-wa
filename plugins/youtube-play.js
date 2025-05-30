@@ -1,4 +1,3 @@
-// youtube-play.js
 import { ytdl, ytdltxt, ytdlaud, ytdlaudtxt } from '../lib/savetube.js'
 
 const handler = async (m, { text, command, conn }) => {
@@ -10,7 +9,6 @@ const handler = async (m, { text, command, conn }) => {
 
   switch (command) {
     case 'play':
-      // busca & baixa o áudio a partir de texto
       res = await ytdlaudtxt(text)
       if (!res.status) throw res.error
       data = res.response
@@ -21,7 +19,6 @@ const handler = async (m, { text, command, conn }) => {
 🕐 Duração: ${data.duration}
 📌 Qualidade: ${data.quality}`
 
-      // envia mensagem com preview
       await conn.sendMessage(
         m.chat,
         {
@@ -29,7 +26,7 @@ const handler = async (m, { text, command, conn }) => {
           contextInfo: {
             externalAdReply: {
               title: data.title,
-              body: 'Play Music 🧸',
+              body: watermark,
               thumbnailUrl: data.thumbnail,
               sourceUrl: `https://www.youtube.com/watch?v=${data.id}`,
               mediaType: 1,
@@ -40,7 +37,6 @@ const handler = async (m, { text, command, conn }) => {
         { quoted: m }
       )
 
-      // envia áudio
       await conn.sendMessage(
         m.chat,
         {
@@ -53,7 +49,6 @@ const handler = async (m, { text, command, conn }) => {
       break
 
     case 'ytmp3':
-      // exige URL
       if (!text.includes('youtu')) {
         throw 'Digite uma URL do YouTube válida'
       }
@@ -74,7 +69,7 @@ const handler = async (m, { text, command, conn }) => {
           contextInfo: {
             externalAdReply: {
               title: data.title,
-              body: 'YouTube Audio ✨',
+              body: watermark,
               thumbnailUrl: data.thumbnail,
               sourceUrl: text,
               mediaType: 1,
@@ -121,9 +116,6 @@ const handler = async (m, { text, command, conn }) => {
       )
       break
   }
-
-  // reação de confirmação
-  await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
 }
 
 handler.help = handler.command = ['play', 'ytmp3', 'ytmp4']

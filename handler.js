@@ -524,8 +524,7 @@ export async function participantsUpdate({ id, participants, action }) {
                     let pp = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
                     let ppgc = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
                     let userName = user.split('@')[0];
-                    let raw_user = this.getName(user);
-                    if(!raw_user.startsWith("+55")) { return };
+                    if (!userName.includes('+55')) return
                     try {
                         pp = await this.profilePictureUrl(user, 'image')
                         ppgc = await this.profilePictureUrl(id, 'image')
