@@ -13,9 +13,8 @@ let handler = async (m, { conn }) => {
     const gifBuffer = await generateSlotSpinGif(emojis)
 
     await conn.sendMessage(m.chat, {
-      document: gifBuffer,
+      image: gifBuffer,
       mimetype: 'image/gif',
-      fileName: 'roleta.gif',
       caption: `🎰 Resultado da Roleta: ${emojis.join(' ')}`
     }, { quoted: m })
 
