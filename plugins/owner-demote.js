@@ -6,7 +6,7 @@ let handler = async (m, { conn, participants }) => {
     m.reply('Sucesso')
 }
 handler.help = ['odemote @tag']
-handler.tags = ['group']
+handler.tags = ['owner']
 handler.command = /^(odemote)$/i
 handler.owner = true
 handler.group = true
