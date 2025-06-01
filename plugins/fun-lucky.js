@@ -1,53 +1,52 @@
-import fs from 'fs'
-
-let file = '../tmp/sorte.json'
-let sorteData = {}
-
-if (fs.existsSync(file)) {
-    sorteData = JSON.parse(fs.readFileSync(file))
-}
-
 let handler = async (m, { conn }) => {
-    const user = m.sender
-
+    const user = global.db.data.users[m.sender]
     const now = Date.now()
-    const data = sorteData[user]
 
-    if (data && now - data.timestamp < 86400000) {
-        let restante = clockString(86400000 - (now - data.timestamp))
-        return m.reply(`⚠️ Você já usou sua sorte hoje!\n\n⏳ Tente novamente em: *${restante}*`)
+    if (!user.luck) {
+        user.luck = {
+            timestamp: 0,
+            percent: 0,
+            numbers: ''
+        }
     }
 
-    let sorte = Math.floor(Math.random() * 101)
-    let numeros = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
+    const tempoRestante = 86400000 - (now - user.luck.timestamp)
 
-    sorteData[user] = {
-        sorte,
-        numeros,
-        timestamp: now
+    if (tempoRestante > 0) {
+        const restante = clockString(tempoRestante)
+        return m.reply(`⚠️ Você já pegou sua sorte hoje!\n
+✨ *Sorte de Hoje:* *${user.luck.percent}%*
+🔢 *Números da Sorte:* *${user.luck.numbers}*
+
+⏳ Tente novamente em *${restante}*.`)
     }
 
-    fs.writeFileSync(file, JSON.stringify(sorteData))
+    const sorte = Math.floor(Math.random() * 101) // 0 a 100%
+    const numeros = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
 
-    let msg = `🎰 *Sua Sorte de Hoje:*
-    
+    user.luck.timestamp = now
+    user.luck.percent = sorte
+    user.luck.numbers = numeros
+
+    let msg = `🎰 *Sua Nova Sorte de Hoje:*\n
 ✨ Porcentagem de Sorte: *${sorte}%*
 🔢 Números da Sorte: *${numeros}*
 
-_Talvez seja um bom dia pra tentar a sorte... ou não!_`
+_Tente sua sorte novamente amanhã!_`
 
     m.reply(msg)
 }
 
 handler.help = ['sorte']
-handler.tags = ['diversão', 'fun']
+handler.tags = ['fun']
 handler.command = /^sorte$/i
 
 export default handler
 
+
 function clockString(ms) {
-    let h = Math.floor(ms / 3600000)
-    let m = Math.floor(ms / 60000) % 60
-    let s = Math.floor(ms / 1000) % 60
+    const h = Math.floor(ms / 3600000)
+    const m = Math.floor(ms / 60000) % 60
+    const s = Math.floor(ms / 1000) % 60
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
 }
