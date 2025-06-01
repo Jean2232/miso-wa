@@ -67,14 +67,14 @@ global.loadDatabase = async function loadDatabase() {
 }
 loadDatabase()
 
+  setInterval(async () => {
+      if (global.db.data) await global.db.write().catch(console.error)
+      clearTmp()
+    }, 60 * 1000)
+    
 const usePairingCode = !process.argv.includes('--use-pairing-code')
 const useMobile = process.argv.includes('--mobile')
 
-var question = function (text) {
-  return new Promise(function (resolve) {
-    rl.question(text, resolve);
-  });
-};
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
 const { version, isLatest } = await fetchLatestBaileysVersion()
@@ -145,31 +145,6 @@ function clearTmp() {
     if (stats.isFile() && (Date.now() - stats.mtimeMs >= 1000 * 60 * 3)) return unlinkSync(file) // 3 minutes
     return false
   })
-}
-
-async function clearSessions(folder = './sessions') {
-  try {
-    const filenames = await readdirSync(folder);
-    const deletedFiles = await Promise.all(filenames.map(async (file) => {
-      try {
-        const filePath = path.join(folder, file);
-        const stats = await statSync(filePath);
-        if (stats.isFile() && file !== 'creds.json') {
-          await unlinkSync(filePath);
-          console.log('Deleted session:'.main, filePath.info);
-          return filePath;
-        }
-      } catch (err) {
-        console.error(`Error processing ${file}: ${err.message}`);
-      }
-    }));
-    return deletedFiles.filter((file) => file !== null);
-  } catch (err) {
-    console.error(`Error in Clear Sessions: ${err.message}`);
-    return [];
-  } finally {
-    setTimeout(() => clearSessions(folder), 1 * 3600000); // 1 Hours
-  }
 }
 
 async function connectionUpdate(update) {
