@@ -19,25 +19,20 @@ let handler = async (m, { conn, participants, groupMetadata }) => {
   const listAdmin = groupAdmins.map((v, i) => `${i + 1}. @${v.id.split('@')[0]}`).join('\n');
   const owner = groupMetadata.owner || groupAdmins.find(p => p.admin === 'superadmin')?.id || m.chat.split`-`[0] + '@s.whatsapp.net';
   let text = `*「 Informações do Grupo 」*\n
-  *ID:* 
-  ${groupMetadata.id}
-  *Nome:* 
-  ${groupMetadata.subject}
-  *Descrição:* 
-  ${groupMetadata.desc?.toString() || 'unknown'}
-  *Total de Membros:*
-  ${participants.length} Membros
-  *Dono do Grupo:* 
-  @${owner.split('@')[0]}
-  *Admins Do Grupo:*
+*ID:* ${groupMetadata.id}
+*Nome:* ${groupMetadata.subject}
+*Total de Membros:* ${participants.length} Membros
+*Admins Do Grupo:*
   ${listAdmin}
-  *Configurações do Grupo:*
+
+*Configurações do Grupo:*
   ${isBanned ? '✅' : '❌'} Banned
   ${welcome ? '✅' : '❌'} Welcome
   ${detect ? '✅' : '❌'} Detect
   ${del ? '❌' : '✅'} Anti Delete
   ${antiLink ? '✅' : '❌'} Anti Link
-  *Configurações de Mensagem:*
+
+*Configurações de Mensagem:*
   Welcome: ${sWelcome}
   Bye: ${sBye}
   Promote: ${sPromote}
