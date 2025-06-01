@@ -41,7 +41,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command }) => {
     'stalk': 'Stalkers',
     'downloader': 'Downloaders',
     'internet': 'Internet',
-    'anime': 'Anime',
+    'fun': 'Brincadeiras',
     'sticker': 'Stickers',
     'tools': 'Ferramentas',
     'group': 'Grupos',
