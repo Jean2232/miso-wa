@@ -1,5 +1,5 @@
 import { promises as fsPromises } from 'fs'; // Para deletar o arquivo de vídeo após o envio
-import { generateSlotSpinMp4 } from '../lib/roulette'; // Ajuste o caminho conforme onde você salvou o arquivo da biblioteca
+import { generateSlotSpinMp4 } from '../lib/roulette.js'; // Ajuste o caminho conforme onde você salvou o arquivo da biblioteca
 
 // Define os símbolos que podem ser sorteados para a roleta.
 // Estes devem corresponder aos símbolos definidos em 'slotMachineGenerator.js'
