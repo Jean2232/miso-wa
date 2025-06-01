@@ -28,7 +28,19 @@ ${usedPrefix + command} demote @user`.trim(), m, null, [['Welcome', '#simulate w
             act = 'demote'
             break
         default:
-            throw 'Evento inválido'
+            throw `Evento Inválido!
+Utilize um dos seguintes Eventos
+- add
+- invite
+- welcome
+
+- bye
+- kick
+- leave
+- remove
+
+- promote
+-demote`
     }
     if (act) return conn.participantsUpdate({
         id: m.chat,
@@ -36,9 +48,9 @@ ${usedPrefix + command} demote @user`.trim(), m, null, [['Welcome', '#simulate w
         action: act
     })
 }
-handler.help = ['simulate <evento> [@menção]']
+handler.help = ['simular <evento> [@menção]', 'simulate <evento> [@menção]']
 handler.tags = ['owner']
 handler.rowner = true
 
-handler.command = /^(simulate|simulasi)$/i
+handler.command = /^(simulate|simular)$/i
 export default handler
