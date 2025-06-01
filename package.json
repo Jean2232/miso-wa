@@ -79,6 +79,7 @@
         "terminal-image": "^1.0.0",
         "url-regex-safe": "^4.0.0",
         "user-agents": "^1.1.555",
+        "uuid": "^11.1.0",
         "wa-sticker-formatter": "^4.4.4",
         "welcomify": "^1.0.5",
         "ws": "^8.13.0",

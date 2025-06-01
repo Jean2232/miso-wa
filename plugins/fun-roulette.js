@@ -1,8 +1,6 @@
-import { promises as fsPromises } from 'fs'; // Para deletar o arquivo de vídeo após o envio
-import { generateSlotSpinMp4 } from '../lib/roulette.js'; // Ajuste o caminho conforme onde você salvou o arquivo da biblioteca
+import { promises as fsPromises } from 'fs';
+import { generateSlotSpinMp4 } from '../lib/roulette.js';
 
-// Define os símbolos que podem ser sorteados para a roleta.
-// Estes devem corresponder aos símbolos definidos em 'slotMachineGenerator.js'
 const symbols = {
     '🍒': 'https://www.imagenspng.com.br/wp-content/uploads/2022/11/emoji-png-2919.png',
     '🍋': 'https://www.imagenspng.com.br/wp-content/uploads/2022/11/emoji-png-2911.png',
@@ -12,8 +10,8 @@ const symbols = {
 };
 
 /**
- * Retorna uma chave de símbolo aleatória da lista de símbolos disponíveis.
- * @returns {string} Uma chave de símbolo aleatória (ex: '🍒').
+ * Retorna uma chave de símbolo aleatória.
+ * @returns {string} Emoji.
  */
 function getRandomSymbolKey() {
     const keys = Object.keys(symbols);
@@ -21,44 +19,60 @@ function getRandomSymbolKey() {
 }
 
 /**
- * Handler para o comando 'roleta'.
- * Gera um vídeo MP4 de uma roleta de caça-níquel com emojis sorteados e o envia ao usuário.
- * @param {object} m - O objeto da mensagem (do framework do bot).
- * @param {object} options - Opções adicionais, incluindo o objeto 'conn' para enviar arquivos.
+ * Gera o resultado da roleta, com 50% de chance de ser 3 iguais.
+ * @returns {string[]} Array com os 3 resultados.
  */
+function generateResult() {
+    const isLucky = Math.random() < 0.5; // 50% de chance de ser 3 iguais
+
+    if (isLucky) {
+        const symbol = getRandomSymbolKey();
+        return [symbol, symbol, symbol];
+    } else {
+        let result = [];
+        while (result.length < 3) {
+            const symbol = getRandomSymbolKey();
+            // Permitir repetições, mas evitar 3 iguais se não for "lucky"
+            if (result.length === 2 && result[0] === result[1] && result[1] === symbol) {
+                continue;
+            }
+            result.push(symbol);
+        }
+        return result;
+    }
+}
+
 let handler = async (m, { conn }) => {
     try {
-        // Gera 3 emojis aleatórios para o resultado final da roleta
-        const finalResult = [
-            getRandomSymbolKey(),
-            getRandomSymbolKey(),
-            getRandomSymbolKey()
-        ];
+        const finalResult = generateResult();
 
-        // Informa o usuário que o vídeo está sendo gerado (pode levar um tempo)
-        m.reply('Gerando sua roleta... isso pode levar um momento!');
+        await m.reply('🎰 Girando a roleta... aguarde!');
 
-        // Gera o vídeo MP4 da roleta usando a função da biblioteca
         const videoPath = await generateSlotSpinMp4(finalResult);
 
-        // Envia o vídeo gerado para o usuário
-        // A legenda agora inclui os emojis sorteados
-        await conn.sendFile(m.chat, videoPath, 'roleta_sorte.mp4', `🎰 Resultado da Roleta: ${finalResult.join(' ')}`, m);
+        await conn.sendMessage(m.chat, {
+            video: { url: videoPath },
+            gifPlayback: true
+        }, { quoted: m });
 
-        // Limpa o arquivo de vídeo gerado após o envio para economizar espaço em disco
         await fsPromises.unlink(videoPath);
-        console.log(`Vídeo ${videoPath} excluído após o envio.`);
+
+        const isWin = finalResult.every(symbol => symbol === finalResult[0]);
+
+        setTimeout(() => {
+            conn.sendMessage(m.chat, {
+                text: isWin ? '🎉 Parabéns, você GANHOU!' : '💔 Que pena, você PERDEU. Tente novamente!',
+            }, { quoted: m });
+        }, 6000); // 6 segundos
 
     } catch (error) {
-        console.error('Erro ao gerar ou enviar a roleta:', error);
-        // Informa o usuário sobre o erro
-        m.reply('Desculpe, houve um erro ao gerar a roleta. Tente novamente mais tarde.');
+        console.error('Erro na roleta:', error);
+        m.reply('❌ Ocorreu um erro ao gerar sua roleta. Tente novamente mais tarde.');
     }
 };
 
-// Define as informações de ajuda, tags e o comando para o plugin
 handler.help = ['roleta'];
 handler.tags = ['fun'];
-handler.command = /^roleta$/i; // O comando que ativará este handler (ex: digitando 'roleta')
+handler.command = /^roleta$/i;
 
 export default handler;
