@@ -267,6 +267,34 @@ async function filesInit() {
 }
 filesInit().then(_ => console.log(Object.keys(global.plugins))).catch(console.error)
 
+async function handleGroupSchedules(conn) {
+    const now = new Date();
+    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    for (const chatId in global.db.data.chats) {
+        const chat = global.db.data.chats[chatId];
+        if (chat.schedules) {
+            if (chat.schedules.open && chat.schedules.open === currentTime) {
+                const metadata = await conn.groupMetadata(chatId);
+                if (metadata.announce === true) {
+                    console.log(`[Agendador] Abrindo grupo ${chatId} às ${currentTime}`);
+                    await conn.groupSettingUpdate(chatId, 'not_announcement');
+                }
+            }
+            else if (chat.schedules.close && chat.schedules.close === currentTime) {
+                const metadata = await conn.groupMetadata(chatId);
+                if (metadata.announce === false) {
+                    console.log(`[Agendador] Fechando grupo ${chatId} às ${currentTime}`);
+                    await conn.groupSettingUpdate(chatId, 'announcement');
+                    conn.reply(chatId, 'O grupo foi fechado conforme o agendamento!', null);
+                }
+            }
+        }
+    }
+}
+
+setInterval(() => handleGroupSchedules(conn), 60 * 1000);
+
 global.reload = async (_ev, filename) => {
   if (pluginFilter(filename)) {
     let dir = global.__filename(join(pluginFolder, filename), true)
