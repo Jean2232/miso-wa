@@ -34,6 +34,7 @@ serialize()
 
 global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '')
 global.timestamp = { start: new Date }
+console.log(timestamp)
 const __dirname = global.__dirname(import.meta.url)
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 global.db = new Low(
@@ -268,26 +269,40 @@ async function filesInit() {
 filesInit().then(_ => console.log(Object.keys(global.plugins))).catch(console.error)
 
 async function handleGroupSchedules(conn) {
-    const now = new Date();
+    const now = new Date(new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }));
     const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
     for (const chatId in global.db.data.chats) {
         const chat = global.db.data.chats[chatId];
-        if (chat.schedules) {
-            if (chat.schedules.open && chat.schedules.open === currentTime) {
+        if (!chat.schedules) continue;
+        if (!chat.lastScheduleRun) chat.lastScheduleRun = {};
+
+        // 🔓 Abrir grupo
+        if (chat.schedules.open === currentTime && chat.lastScheduleRun.open !== currentTime) {
+            try {
                 const metadata = await conn.groupMetadata(chatId);
                 if (metadata.announce === true) {
                     console.log(`[Agendador] Abrindo grupo ${chatId} às ${currentTime}`);
                     await conn.groupSettingUpdate(chatId, 'not_announcement');
+                    chat.lastScheduleRun.open = currentTime;
                 }
+            } catch (err) {
+                console.error(`Erro ao abrir grupo ${chatId}:`, err);
             }
-            else if (chat.schedules.close && chat.schedules.close === currentTime) {
+        }
+
+        // 🔒 Fechar grupo
+        if (chat.schedules.close === currentTime && chat.lastScheduleRun.close !== currentTime) {
+            try {
                 const metadata = await conn.groupMetadata(chatId);
                 if (metadata.announce === false) {
                     console.log(`[Agendador] Fechando grupo ${chatId} às ${currentTime}`);
                     await conn.groupSettingUpdate(chatId, 'announcement');
-                    conn.reply(chatId, 'O grupo foi fechado conforme o agendamento!', null);
+                    await conn.sendMessage(chatId, { text: 'O grupo foi fechado conforme o agendamento!' });
+                    chat.lastScheduleRun.close = currentTime;
                 }
+            } catch (err) {
+                console.error(`Erro ao fechar grupo ${chatId}:`, err);
             }
         }
     }
