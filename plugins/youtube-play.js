@@ -9,7 +9,8 @@ const handler = async (m, { text, command, conn }) => {
 
   switch (command) {
     case 'play':
-      res = await ytdlaudtxt(text.slice(0, 15))
+      const cleanedText = text.replace(/\s+/g, '')
+	  res = await ytdlaudtxt(cleanedText)
       if (!res.status) throw res.error
       data = res.response
 
