@@ -28,7 +28,7 @@ const handler = async (m, { text, command, conn }) => {
               title: data.title,
               body: watermark,
               thumbnailUrl: data.thumbnail,
-              sourceUrl: `https://www.youtube.com/watch?v=${data.id}`,
+              sourceUrl: `https://www.youtube.com/watch?v=$${data.id}`,
               mediaType: 1,
               renderLargerThumbnail: true
             }
