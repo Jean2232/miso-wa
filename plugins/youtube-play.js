@@ -9,7 +9,7 @@ const handler = async (m, { text, command, conn }) => {
 
   switch (command) {
     case 'play':
-      res = await ytdlaudtxt(text)
+      res = await ytdlaudtxt(text.slice(0, 15))
       if (!res.status) throw res.error
       data = res.response
 
